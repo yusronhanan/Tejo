@@ -109,7 +109,7 @@ public class Player : MonoBehaviour
 
     void UpdateAnimationStates()
     {
-        if(grounded && !walk)
+        if(grounded && !walk && !bounce)
         {
             GetComponent<Animator>().SetBool("isJumping", false);
             GetComponent<Animator>().SetBool("isRunning", false);

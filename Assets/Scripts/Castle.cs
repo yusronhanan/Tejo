@@ -4,15 +4,23 @@ using UnityEngine;
 
 public class Castle : MonoBehaviour
 {
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.tag == "Player")
+        {
+            Application.LoadLevel("Win");
+        }
+    }
+    /*
     // Start is called before the first frame update
     void Start()
     {
         
     }
 
-    // Update is called once per frame
+    //Update is called once per frame
     void Update()
     {
         
-    }
+    }*/
 }
