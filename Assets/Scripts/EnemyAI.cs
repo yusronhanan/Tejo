@@ -10,6 +10,7 @@ public class EnemyAI : MonoBehaviour
     public bool isWalkingLeft = true;
 
     public LayerMask floorMask;
+    public LayerMask wallMask;
 
     private bool grounded = false;
 
@@ -69,6 +70,7 @@ public class EnemyAI : MonoBehaviour
             {
                 pos = CheckGround(pos);
             }
+            CheckWalls(pos, scale.x);
 
             transform.localPosition = pos;
             transform.localScale = scale;
@@ -100,6 +102,11 @@ public class EnemyAI : MonoBehaviour
                 hitRay = groundRight;
             }
 
+            if(hitRay.collider.tag == "Player")
+            {
+                Application.LoadLevel("GameOver");
+            }
+
             //Vector3 xyz = ;
             pos.y = hitRay.collider.bounds.center.y  + hitRay.collider.bounds.size.y / 2 + .5f;
 
@@ -117,6 +124,40 @@ public class EnemyAI : MonoBehaviour
             }
         }
         return pos;
+    }
+
+    void CheckWalls(Vector3 pos, float direction)
+    {
+        Vector2 originTop = new Vector2(pos.x + direction * 0.4f, pos.y + .5f - 0.2f);
+        Vector2 originMiddle = new Vector2(pos.x + direction * 0.4f, pos.y);
+        Vector2 originBottom = new Vector2(pos.x + direction * 0.4f, pos.y - .5f + 0.2f);
+
+        RaycastHit2D wallTop = Physics2D.Raycast(originTop, new Vector2(direction, 0), velocity.x * Time.deltaTime, wallMask);
+        RaycastHit2D wallMiddle = Physics2D.Raycast(originMiddle, new Vector2(direction, 0), velocity.x * Time.deltaTime, wallMask);
+        RaycastHit2D wallBottom = Physics2D.Raycast(originBottom, new Vector2(direction, 0), velocity.x * Time.deltaTime, wallMask);
+        
+        if(wallTop.collider != null || wallMiddle.collider != null || wallBottom.collider != null)
+        {
+            RaycastHit2D hitRay = wallTop;
+
+            if (wallTop)
+            {
+                hitRay = wallTop;
+            } else if (wallMiddle)
+            {
+                hitRay = wallMiddle;
+            } else if (wallBottom)
+            {
+                hitRay = wallBottom;
+            }
+
+            if (hitRay.collider.tag == "Player")
+            {
+                Application.LoadLevel("GameOver");
+            }
+
+            isWalkingLeft = !isWalkingLeft;
+        }
     }
 
     void OnBecameVisible()
