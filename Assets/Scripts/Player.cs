@@ -5,6 +5,8 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public float jumpVelocity;
+    public float bounceVelocity;
+
     public Vector2 velocity;
     public float gravity;
     public LayerMask wallMask;
@@ -16,12 +18,14 @@ public class Player : MonoBehaviour
     {
         jumping,
         idle,
-        walking
+        walking,
+        bouncing
     }
 
     private PlayerState playerState = PlayerState.idle;
 
     private bool grounded = false;
+    private bool bounce = false;
 
     // Start is called before the first frame update
     void Start()
@@ -73,6 +77,19 @@ public class Player : MonoBehaviour
         {
             pos.y += velocity.y * Time.deltaTime;
 
+            velocity.y -= gravity * Time.deltaTime;
+        }
+
+        if(bounce && playerState != PlayerState.bouncing)
+        {
+            playerState = PlayerState.bouncing;
+
+            velocity = new Vector2(velocity.x, bounceVelocity);
+        }
+
+        if(playerState == PlayerState.bouncing)
+        {
+            pos.y += velocity.y * Time.deltaTime;
             velocity.y -= gravity * Time.deltaTime;
         }
 
@@ -168,6 +185,12 @@ public class Player : MonoBehaviour
                 hitRay = floorRight;
             }
 
+            if(hitRay.collider.tag == "Enemy")
+            {
+                bounce = true;
+                hitRay.collider.GetComponent<EnemyAI>().Crush();
+            }
+
         
 
             playerState = PlayerState.idle;
@@ -227,6 +250,7 @@ public class Player : MonoBehaviour
 
         playerState = PlayerState.jumping;
 
+        bounce = false;
         grounded = false;
     }
 }
