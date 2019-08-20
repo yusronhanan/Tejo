@@ -237,6 +237,11 @@ public class Player : MonoBehaviour
                 hitRay = ceilRight;
             }
 
+            if(hitRay.collider.tag == "QuestionBlock")
+            {
+                hitRay.collider.GetComponent<QuestionBlock>().QuestionBlockBounce();
+            }
+
             pos.y = hitRay.collider.bounds.center.y - hitRay.collider.bounds.size.y / 2 - 1;
 
             fall();
