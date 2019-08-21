@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     public LayerMask wallMask;
     public LayerMask floorMask;
 
-    private bool walk, walk_left, walk_right, jump;
+    private bool walk, walk_left, walk_right, jump, input_z;
 
     public enum PlayerState
     {
@@ -36,6 +36,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        originalPosition = transform.localPosition;
         CheckPlayerInput();
         UpdatePlayerPosition();
         UpdateAnimationStates();
@@ -93,6 +94,11 @@ public class Player : MonoBehaviour
             velocity.y -= gravity * Time.deltaTime;
         }
 
+        if (input_z)
+        {
+            PresentBullet();
+        }
+
         if(velocity.y <= 0)
         {
             pos = CheckFloorRays(pos);
@@ -132,6 +138,8 @@ public class Player : MonoBehaviour
         bool input_left = Input.GetKey(KeyCode.LeftArrow);
         bool input_right = Input.GetKey(KeyCode.RightArrow);
         bool input_space = Input.GetKeyDown(KeyCode.Space);
+
+        input_z = Input.GetKeyDown("z");
 
         walk = input_left || input_right;
 
@@ -185,13 +193,15 @@ public class Player : MonoBehaviour
                 hitRay = floorRight;
             }
 
-            if(hitRay.collider.tag == "Enemy")
+            
+
+            if (hitRay.collider.tag == "Enemy")
             {
                 bounce = true;
                 hitRay.collider.GetComponent<EnemyAI>().Crush();
             }
 
-        
+
 
             playerState = PlayerState.idle;
 
@@ -258,4 +268,44 @@ public class Player : MonoBehaviour
         bounce = false;
         grounded = false;
     }
+
+    private Vector2 originalPosition;
+    public float coinMoveSpeed = 8f;
+    public float coinMoveHeight = 3f;
+    public float coinFallDistances = 2f;
+
+    void PresentBullet()
+    {
+        GameObject spinningBullet = (GameObject)Instantiate(Resources.Load("Prefabs/Spinning_bullet", typeof(GameObject)));
+
+        spinningBullet.transform.SetParent(this.transform.parent);
+        spinningBullet.transform.localPosition = new Vector2(originalPosition.x + 1, originalPosition.y);
+        StartCoroutine(MoveBullet(spinningBullet));
+    }
+    IEnumerator MoveBullet(GameObject coin)
+    {
+        while (true)
+        {
+            coin.transform.localPosition = new Vector2(coin.transform.localPosition.x + coinMoveSpeed * Time.deltaTime, coin.transform.localPosition.y);
+
+            if (coin.transform.localPosition.x >= originalPosition.x + coinMoveHeight + 1)
+            {
+                break;
+            }
+            yield return null;
+        }
+        while (true)
+        {
+            coin.transform.localPosition = new Vector2(coin.transform.localPosition.x - coinMoveSpeed * Time.deltaTime, coin.transform.localPosition.y);
+
+            if (coin.transform.localPosition.x <= originalPosition.x + coinMoveHeight + 1)
+            {
+                Destroy(coin.gameObject);
+                break;
+            }
+            yield return null;
+        }
+    }
+
+
 }

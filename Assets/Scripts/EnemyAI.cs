@@ -38,6 +38,8 @@ public class EnemyAI : MonoBehaviour
     {
         UpdateEnemyPosition();
         CheckCrushed();
+
+        
     }
 
     public void Crush()
@@ -66,6 +68,7 @@ public class EnemyAI : MonoBehaviour
                 Destroy(this.gameObject);
             }
         }
+        
     }
 
     void UpdateEnemyPosition()
@@ -137,6 +140,12 @@ public class EnemyAI : MonoBehaviour
             if(hitRay.collider.tag == "Player")
             {
                 Application.LoadLevel("GameOver");
+
+            }
+            if (hitRay.collider.tag == "Bullet")
+            {
+                Destroy(this.gameObject);
+
             }
 
             //Vector3 xyz = ;
@@ -186,6 +195,12 @@ public class EnemyAI : MonoBehaviour
             if (hitRay.collider.tag == "Player")
             {
                 Application.LoadLevel("GameOver");
+
+            }
+            if (hitRay.collider.tag == "Bullet")
+            {
+                Destroy(this.gameObject);
+
             }
 
             isWalkingLeft = !isWalkingLeft;
