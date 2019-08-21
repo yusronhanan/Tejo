@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 public class Play : MonoBehaviour
 {
 
+    
+
     public void MainMenu(string infoScene)
     {
         SceneManager.LoadScene(infoScene);
@@ -13,11 +15,7 @@ public class Play : MonoBehaviour
         //sound.Play();
         //		textText.text = Data.infoScene;
     }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    
 
     // Update is called once per frame
     /*void Update()
