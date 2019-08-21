@@ -37,6 +37,7 @@ public class Player : MonoBehaviour
     void Update()
     {
         originalPosition = transform.localPosition;
+        originalScale = transform.localScale;
         CheckPlayerInput();
         UpdatePlayerPosition();
         UpdateAnimationStates();
@@ -269,7 +270,7 @@ public class Player : MonoBehaviour
         grounded = false;
     }
 
-    private Vector2 originalPosition;
+    private Vector2 originalPosition,originalScale;
     public float coinMoveSpeed = 8f;
     public float coinMoveHeight = 3f;
     public float coinFallDistances = 2f;
@@ -279,11 +280,19 @@ public class Player : MonoBehaviour
         GameObject spinningBullet = (GameObject)Instantiate(Resources.Load("Prefabs/Spinning_bullet", typeof(GameObject)));
 
         spinningBullet.transform.SetParent(this.transform.parent);
-        spinningBullet.transform.localPosition = new Vector2(originalPosition.x + 1, originalPosition.y);
+        if(originalScale.x == 1)
+        {
+            spinningBullet.transform.localPosition = new Vector2(originalPosition.x + 1, originalPosition.y);
+        }
+        else
+        {
+            spinningBullet.transform.localPosition = new Vector2(originalPosition.x - 1, originalPosition.y);
+        }
         StartCoroutine(MoveBullet(spinningBullet));
     }
     IEnumerator MoveBullet(GameObject coin)
     {
+        if(originalScale.x == 1) { 
         while (true)
         {
             coin.transform.localPosition = new Vector2(coin.transform.localPosition.x + coinMoveSpeed * Time.deltaTime, coin.transform.localPosition.y);
@@ -303,7 +312,33 @@ public class Player : MonoBehaviour
                 Destroy(coin.gameObject);
                 break;
             }
+            
             yield return null;
+        }
+        } else if(originalScale.x == -1)
+        {
+            while (true)
+            {
+                coin.transform.localPosition = new Vector2(coin.transform.localPosition.x - coinMoveSpeed * Time.deltaTime, coin.transform.localPosition.y);
+
+                if (coin.transform.localPosition.x <= originalPosition.x - coinMoveHeight - 1)
+                {
+                    break;
+                }
+                yield return null;
+            }
+            while (true)
+            {
+                coin.transform.localPosition = new Vector2(coin.transform.localPosition.x + coinMoveSpeed * Time.deltaTime, coin.transform.localPosition.y);
+
+                if (coin.transform.localPosition.x >= originalPosition.x - coinMoveHeight - 1)
+                {
+                    Destroy(coin.gameObject);
+                    break;
+                }
+
+                yield return null;
+            }
         }
     }
 
