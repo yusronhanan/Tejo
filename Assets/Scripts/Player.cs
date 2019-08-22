@@ -201,6 +201,16 @@ public class Player : MonoBehaviour
                 bounce = true;
                 hitRay.collider.GetComponent<EnemyAI>().Crush();
             }
+            if (hitRay.collider.tag == "Soldier")
+            {
+                bounce = true;
+                hitRay.collider.GetComponent<SoldierAI>().Crush();
+            }
+            if (hitRay.collider.tag == "BulletSL")
+            {
+                Application.LoadLevel("GameOver");
+
+            }
 
 
 
