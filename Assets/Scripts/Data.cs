@@ -6,7 +6,8 @@ public class Data
 { //+ : MonoBehaviour
 
     //public class Data {
-    public static int score;
+    //public static int score = 0;
+
     //public static string infoScene;
     public static string prevScene;
     //Data.infoScene = infoScene;
